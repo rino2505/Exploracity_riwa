@@ -9,38 +9,39 @@
     >
       <q-input
         filled
-        v-model="naziv"
+        v-model="noviDogadaj.naziv"
         label="Naziv događaja"
         
       />
 
       <q-input
         filled
-        v-model="datum"
+        v-model="noviDogadaj.datum"
         label="Datum događaja"
         
       />
 
       <q-input
         filled
-        v-model="vrijeme"
+        v-model="noviDogadaj.vrijeme"
         label="Vrijeme događaja"
 
       />
 
       <q-input
         filled
-        v-model="lokacija"
+        v-model="noviDogadaj.lokacija"
         label="Lokacija događaja"
 
       />
 
       <q-input
         filled
-        v-model="opis"
+        v-model="noviDogadaj.opis"
         label="Opis događaja"
 
       />
+      <q-file v-model="noviDogadaj.slika" accept="image/*" filled clearable label="Slika događaja" />
 
       <div>
         <q-btn label="Unos događaja" type="potvrdi" color="primary"/>
@@ -58,6 +59,7 @@ const datum = ref('')
 const vrijeme = ref('')
 const lokacija = ref('')
 const opis = ref('')
+const slika=ref('')
 
 function onSubmit() {
   // logika spremanja
@@ -69,5 +71,6 @@ function onReset() {
   vrijeme.value = ''
   lokacija.value = ''
   opis.value = ''
+  slika.value=''
 }
 </script>
