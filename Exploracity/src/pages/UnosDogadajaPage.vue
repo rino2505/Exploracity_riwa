@@ -11,40 +11,35 @@
         filled
         v-model="naziv"
         label="Naziv događaja"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Neispravan unos']"
+        
       />
 
       <q-input
         filled
         v-model="datum"
         label="Datum događaja"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Neispravan unos']"
+        
       />
 
       <q-input
         filled
         v-model="vrijeme"
         label="Vrijeme događaja"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Neispravan unos']"
+
       />
 
       <q-input
         filled
         v-model="lokacija"
         label="Lokacija događaja"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Neispravan unos']"
+
       />
 
       <q-input
         filled
         v-model="opis"
         label="Opis događaja"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Neispravan unos']"
+
       />
 
       <div>
@@ -56,5 +51,23 @@
 </template>
 
 <script setup>
-//
+import { ref } from 'vue'
+
+const naziv = ref('')
+const datum = ref('')
+const vrijeme = ref('')
+const lokacija = ref('')
+const opis = ref('')
+
+function onSubmit() {
+  // logika spremanja
+}
+
+function onReset() {
+  naziv.value = ''
+  datum.value = ''
+  vrijeme.value = ''
+  lokacija.value = ''
+  opis.value = ''
+}
 </script>

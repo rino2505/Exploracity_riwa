@@ -5,6 +5,7 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title> Exploracity </q-toolbar-title>
+
       </q-toolbar>
     </q-header>
 
@@ -34,7 +35,7 @@ const linksList = [
     link: '#',
   },
   {
-    title: 'Unos doagađaja',
+    title: 'Unos događaja',
     caption: 'Unos događaja',
     icon: 'code',
     link: '#unosdogadaja',
