@@ -94,6 +94,8 @@ export default defineConfig((ctx) => {
       open: true, // opens browser window automatically
     },
 
+    
+
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
       config: {},
