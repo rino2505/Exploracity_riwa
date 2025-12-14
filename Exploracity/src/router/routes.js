@@ -10,9 +10,7 @@ const routes = [
       { path: '/proba', component: () => import('pages/ProbaStranica.vue')},
       { path: '/novaProba', component: () => import('pages/ProbaStranicaNova.vue')},
       { path: '/novidogadaj', component: () => import('pages/UnosDogadajaPage.vue')},
-
-
-
+      { path: '/dogadaji', component: () => import('pages/PrikazDogadajaPage.vue')}
     ],
   },
 

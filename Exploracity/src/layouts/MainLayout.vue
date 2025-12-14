@@ -38,6 +38,12 @@ const linksList = [
     icon: 'favorite',
     link: '#/novidogadaj'
   },
+   {
+    title: 'Prikaz događaja',
+    caption: 'Prikaz događaja',
+    icon: 'favorite',
+    link: '#/dogadaji'
+  },
     {
     title: 'Unos pitanja za događaj',
     caption: 'Unos pitanja za događaj',
