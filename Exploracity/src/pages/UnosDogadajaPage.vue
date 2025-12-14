@@ -57,11 +57,13 @@ function spremiDogadaj() {
 
 function odustani() {
   noviDogadaj.value = {
-    id: 0,
-    naslov: '',
-    autor: '',
-    opis: '',
-    slika: null,
+  id: 0,
+  naziv: '',
+  lokacija: '',
+  datum: '',
+  vrijeme:'',
+  opis:'',
+  slika: null,
   }
 }
 </script>
