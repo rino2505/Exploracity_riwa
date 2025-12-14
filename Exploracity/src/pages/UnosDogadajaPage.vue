@@ -1,76 +1,73 @@
 <template>
-  <q-page padding>
-    <h4> Unos događaja</h4>
-    <p></p>
-    <q-form
-      @submit="onSubmit"
-      @reset="onReset"
-      class="q-gutter-md"
-    >
-      <q-input
+  <q-page class="q-pa-md">
+    <div class="q-gutter-md" style="max-width: 600px; margin: auto;">
+
+      <h4>Unos novog događaja</h4>
+
+      <q-input v-model="noviDogadaj.naziv" label="Naziv" outlined />
+      <q-input v-model="noviDogadaj.lokacija" label="Lokacija" outlined />
+      <q-input v-model="noviDogadaj.datum" label="Datum događaja" outlined />
+      <q-input v-model="noviDogadaj.vrijeme" label="Vrijeme događaja" outlined />
+      <q-input v-model="noviDogadaj.opis" label="Opis" type="textarea" outlined />
+
+      <q-file
+        v-model="noviDogadaj.slika"
+        label="Odaberi sliku"
+        accept="image/*"
         filled
-        v-model="noviDogadaj.naziv"
-        label="Naziv događaja"
-        
+        clearable
       />
 
-      <q-input
-        filled
-        v-model="noviDogadaj.datum"
-        label="Datum događaja"
-        
-      />
+      
 
-      <q-input
-        filled
-        v-model="noviDogadaj.vrijeme"
-        label="Vrijeme događaja"
-
-      />
-
-      <q-input
-        filled
-        v-model="noviDogadaj.lokacija"
-        label="Lokacija događaja"
-
-      />
-
-      <q-input
-        filled
-        v-model="noviDogadaj.opis"
-        label="Opis događaja"
-
-      />
-      <q-file v-model="noviDogadaj.slika" accept="image/*" filled clearable label="Slika događaja" />
-
-      <div>
-        <q-btn label="Unos događaja" type="potvrdi" color="primary"/>
-        <q-btn label="Odbaci promjene" type="odbaci" color="primary" flat class="q-ml-sm" />
+      <div class="row q-gutter-sm justify-center">
+        <q-btn label="Spremi" color="primary" @click="spremiDogadaj" />
+        <q-btn label="Odustani" color="negative" flat @click="odustani" />
       </div>
-    </q-form>
+
+      <q-separator spaced />
+
+    </div>
   </q-page>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 
-const naziv = ref('')
-const datum = ref('')
-const vrijeme = ref('')
-const lokacija = ref('')
-const opis = ref('')
-const slika=ref('')
+const dogadaji = ref([])
 
-function onSubmit() {
-  // logika spremanja
+
+const noviDogadaj = ref({
+  id: 0,
+  naziv: '',
+  lokacija: '',
+  datum: '',
+  vrijeme:'',
+  opis:'',
+  slika: null,
+})
+
+function spremiDogadaj() {
+  const noviId = dogadaji.value.length + 1
+  const kopija = { ...noviDogadaj.value, id: noviId }
+
+  dogadaji.value.push(kopija)
+  odustani()
 }
 
-function onReset() {
-  naziv.value = ''
-  datum.value = ''
-  vrijeme.value = ''
-  lokacija.value = ''
-  opis.value = ''
-  slika.value=''
+function odustani() {
+  noviDogadaj.value = {
+    id: 0,
+    naslov: '',
+    autor: '',
+    opis: '',
+    slika: null,
+  }
 }
 </script>
+
+<style scoped>
+h4 {
+  text-align: center;
+}
+</style>
