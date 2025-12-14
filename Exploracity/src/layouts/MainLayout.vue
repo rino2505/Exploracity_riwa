@@ -33,64 +33,10 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Knjižnica početno',
-    caption: 'Knjižnica početno',
-    icon: 'home',
-    link: '#/',
-  },
-  {
-    title: 'Knjižnica - popis knjiga',
-    caption: 'KnjiPopis knjiga u knjižnici',
-    icon: 'library_books',
-    link: '#/PopisKnjiga',
-  },
-  {
-    title: 'Knjižnica - nove knjige',
-    caption: 'Nove knjige u knjižnici ',
-    icon: 'book',
-    link: '#/noveKnjige',
-  },
-  {
-    title: 'Pretraživanje',
-    caption: 'Pretraživanje',
-    icon: 'pageview',
-    link: '#/pretrazivanje',
-  },
-  {
-    title: 'Lokacija',
-    caption: 'Lokacija',
-    icon: 'location_on',
-    link: '#/lokacija',
-  },
-  {
-    title: 'Login',
-    caption: 'Login',
-    icon: 'login',
-    link: '#/login',
-  },
-  {
-    title: 'Registracija',
-    caption: 'Registracija',
-    icon: 'person_add',
-    link: '#/registracija',
-  },
-  {
-    title: 'GitHub Knjiznica',
-    caption: 'GitHub Knjiznica projekt',
-    icon: 'folder_shared',
-    link: 'https://github.com/akozul/Knjiznica.git',
-  },
-  {
-    title: 'Veleučilište u Rijeci',
-    caption: 'Stranica Veleučilišta u Rijeci',
-    icon: 'import_contacts',
-    link: 'https://veleri.hr'
-  },
-  {
-    title: 'Unos novih knjiga',
-    caption: 'Unos novih knjiga',
+    title: 'Unos novih događaja',
+    caption: 'Unos novih događaja',
     icon: 'favorite',
-    link: '#/unosnovihknjiga'
+    link: '#/novidogadaj'
   },
     {
     title: 'Unos pitanja za događaj',
