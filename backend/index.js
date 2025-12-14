@@ -26,6 +26,13 @@ connection.connect(function(err) {
     console.log("Uspješno povezano na bazu!");
 });
 
+app.get("/api/prikazidogadaje", (req, res) => {
+    connection.query("SELECT * FROM Dogadaj", (error, results) => {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
 // POST ruta za unos događaja
 app.post('/unosdogadaja', (req, res) => {
     const { naziv, lokacija, datum, vrijeme, opis, slika } = req.body;
