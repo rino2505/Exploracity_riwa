@@ -36,37 +36,62 @@ import { ref } from 'vue'
 
 const dogadaji = ref([])
 
-
 const noviDogadaj = ref({
   id: 0,
   naziv: '',
   lokacija: '',
   datum: '',
-  vrijeme:'',
-  opis:'',
+  vrijeme: '',
+  opis: '',
   slika: null,
 })
 
-function spremiDogadaj() {
-  const noviId = dogadaji.value.length + 1
-  const kopija = { ...noviDogadaj.value, id: noviId }
+async function spremiDogadaj() {
+  try {
+    const response = await fetch('http://localhost:3000/unosdogadaja', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        naziv: noviDogadaj.value.naziv,
+        lokacija: noviDogadaj.value.lokacija,
+        datum: noviDogadaj.value.datum,
+        vrijeme: noviDogadaj.value.vrijeme,
+        opis: noviDogadaj.value.opis,
+        slika: noviDogadaj.value.slika // može biti null ili tekst
+      })
+    });
 
-  dogadaji.value.push(kopija)
-  odustani()
+    const data = await response.json();
+    console.log("Odgovor backend-a:", data);
+
+    // dodaj lokalno u array
+    dogadaji.value.push({ ...noviDogadaj.value, id: data.id });
+
+    odustani();
+    alert("Događaj uspješno spremljen!");
+
+  } catch (err) {
+    console.error("Greška pri slanju:", err);
+    alert("Greška pri spremanju događaja! Pogledaj konzolu.");
+  }
 }
 
 function odustani() {
   noviDogadaj.value = {
-  id: 0,
-  naziv: '',
-  lokacija: '',
-  datum: '',
-  vrijeme:'',
-  opis:'',
-  slika: null,
+    id: 0,
+    naziv: '',
+    lokacija: '',
+    datum: '',
+    vrijeme: '',
+    opis: '',
+    slika: null,
   }
 }
 </script>
+
+
 
 <style scoped>
 h4 {

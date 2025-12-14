@@ -7,8 +7,6 @@ const app = express();
 const port = 3000;
 
 app.use(cors());
-
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -20,48 +18,37 @@ const connection = mysql.createConnection({
     database: "pkarlovic",
 });
 
-app.use(express.urlencoded({ extended: true }));
-
 connection.connect(function(err) {
-    if (err) throw err;
+    if (err) {
+        console.error("Greška pri povezivanju na bazu:", err);
+        return;
+    }
     console.log("Uspješno povezano na bazu!");
 });
 
+// POST ruta za unos događaja
 app.post('/unosdogadaja', (req, res) => {
-  const {
-    naziv,
-    lokacija,
-    datum,
-    vrijeme,
-    opis,
-    slika
-  } = req.body;
+    const { naziv, lokacija, datum, vrijeme, opis, slika } = req.body;
 
-  const sql = `
-    INSERT INTO Dogadaj
-    (Naziv_dogadaja, Lokacija_dogadaja, Datum_dogadaja, Vrijeme_dogadaja, Opis_dogadaja, Slika_dogadaja)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `;
+    console.log("Primljeni podaci:", req.body); // debug log
 
-  connection.query(
-    sql,
-    [naziv, lokacija, datum, vrijeme, opis, slika],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Greška pri unosu' });
-      }
+    const sql = `
+        INSERT INTO Dogadaj
+        (Naziv_dogadaja, Lokacija_dogadaja, Datum_dogadaja, Vrijeme_dogadaja, Opis_dogadaja, Slika_dogadaja)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
 
-      res.json({
-        message: 'Događaj spremljen',
-        id: result.insertId
-      });
-    }
-  );
+    connection.query(sql, [naziv, lokacija, datum, vrijeme, opis, slika], (err, result) => {
+        if (err) {
+            console.error("Greška pri unosu u bazu:", err);
+            return res.status(500).json({ message: "Greška pri unosu" });
+        }
+
+        console.log("Uspješno spremljeno:", result);
+        res.json({ message: "Događaj spremljen", id: result.insertId });
+    });
 });
 
-
-
 app.listen(port, () => {
-  console.log(`Server radi na portu ${port}`);
+    console.log(`Server radi na portu ${port}`);
 });
