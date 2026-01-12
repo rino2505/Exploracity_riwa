@@ -47,9 +47,17 @@ const linksList = [
     {
     title: 'Unos pitanja za događaj',
     caption: 'Unos pitanja za događaj',
-    icon: 'favorite',
+    icon: 'forum',
     link: '#/unospitanja'
   },
+  {
+    title: 'Login stranica',
+    caption: 'Login stranica',
+    icon: 'login',
+    link: '#/login'
+  },
+
+  
 
 ]
 
