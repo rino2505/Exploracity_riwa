@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mysql = require("mysql2");
+const multer = require("multer");
 
 const app = express();
 const port = 3000;
@@ -11,7 +12,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Multer za upload slike
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
+
+// MySQL konekcija
 const connection = mysql.createConnection({
     host: "student.veleri.hr",
     user: "pkarlovic",
@@ -50,6 +56,50 @@ app.post("/login", (req, res) => {
         }
     });
 });
+
+// GET – popis događaja
+app.get("/dogadaji", (req, res) => {
+    db.query("SELECT ID_dogadaja, Naziv_dogadaja FROM Dogadaj", (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.send(result);
+    });
+});
+
+// GET – vraća sliku događaja
+app.get("/dogadaj/:id/slika", (req, res) => {
+    const id = req.params.id;
+
+    db.query(
+        "SELECT Slika_dogadaja FROM Dogadaj WHERE ID_dogadaja = ?",
+        [id],
+        (err, result) => {
+            if (err) return res.status(500).send(err); // 500 znači internal server error vjerojatno nije spojilo na bazu
+            if (!result.length || !result[0].Slika_dogadaja) // ovo gleda jel opce ima slike ako nema vraca da nema slike
+                return res.status(404).send("Nema slike");
+
+            res.contentType("image/jpeg");
+            res.send(result[0].Slika_dogadaja); // salje sliku kao odgovor
+        }
+    );
+});
+
+// POST – upload slike i zapis u bazu
+app.post("/dogadaj/:id/upload", upload.single("slika"), (req, res) => {
+    const id = req.params.id; // id događaja iz URL parametra
+    const slika = req.file.buffer; // byte code od slike koju smo uploadali i biti ce stavljena u medium blob
+
+    db.query(
+        "UPDATE Dogadaj SET Slika_dogadaja = ? WHERE ID_dogadaja = ?", // postavlja bytecode slike u bazu podataka prepared statement
+        [slika, id],
+        (err) => {
+            if (err) return res.status(500).send(err);
+            res.send({ message: "Slika uspješno spremljena!" });
+        }
+    );
+});
+
+
+
 
 app.get('/api/popis-dogadaja', (req, res) => {
   const sql = 'SELECT ID_dogadaja, Naziv_dogadaja FROM Dogadaj'; 
