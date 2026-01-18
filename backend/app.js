@@ -59,7 +59,7 @@ app.post("/login", (req, res) => {
 
 // GET – popis događaja
 app.get("/dogadaji", (req, res) => {
-    db.query("SELECT ID_dogadaja, Naziv_dogadaja FROM Dogadaj", (err, result) => {
+    connection.query("SELECT ID_dogadaja, Naziv_dogadaja FROM Dogadaj", (err, result) => {
         if (err) return res.status(500).send(err);
         res.send(result);
     });
@@ -69,7 +69,7 @@ app.get("/dogadaji", (req, res) => {
 app.get("/dogadaj/:id/slika", (req, res) => {
     const id = req.params.id;
 
-    db.query(
+    connection.query(
         "SELECT Slika_dogadaja FROM Dogadaj WHERE ID_dogadaja = ?",
         [id],
         (err, result) => {
@@ -88,7 +88,7 @@ app.post("/dogadaj/:id/upload", upload.single("slika"), (req, res) => {
     const id = req.params.id; // id događaja iz URL parametra
     const slika = req.file.buffer; // byte code od slike koju smo uploadali i biti ce stavljena u medium blob
 
-    db.query(
+    connection.query(
         "UPDATE Dogadaj SET Slika_dogadaja = ? WHERE ID_dogadaja = ?", // postavlja bytecode slike u bazu podataka prepared statement
         [slika, id],
         (err) => {

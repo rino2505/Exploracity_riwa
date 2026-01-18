@@ -56,6 +56,18 @@ const linksList = [
     icon: 'login',
     link: '#/login'
   },
+  {
+    title: 'Unos slika za događaj organizatora',
+    caption: 'Unos slika za događaj organizatora',
+    icon: 'image',
+    link: '#/dogadajislike'
+  },
+  {
+    title: 'Unos slika za događaj korisnika',
+    caption: 'Unos slika za događaj korisnika',
+    icon: 'image',
+    link: '#/dogadajislike'
+  },
 
   
 
