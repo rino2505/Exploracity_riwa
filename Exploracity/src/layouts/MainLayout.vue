@@ -66,7 +66,7 @@ const linksList = [
     title: 'Unos slika za događaj korisnika',
     caption: 'Unos slika za događaj korisnika',
     icon: 'image',
-    link: '#/dogadajislike'
+    link: '#/dogadajislikeuser'
   },
 
   
