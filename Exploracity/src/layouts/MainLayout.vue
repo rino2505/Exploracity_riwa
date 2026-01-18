@@ -5,7 +5,8 @@
         <q-btn icon="menu" color="black" flat aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="row items-center">
-          <img class="q-ma-md"
+          <img
+            class="q-ma-md"
             alt="Quasar logo"
             src="~assets/exploracity-horizontal-logo.svg"
             style="width: 200px; height: 40px"
@@ -16,8 +17,11 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <EssentialLink
+          v-for="link in linksList"
+          :key="link.title"
+          v-bind="link"
+        />
       </q-list>
     </q-drawer>
 
@@ -38,13 +42,13 @@ const linksList = [
     icon: 'favorite',
     link: '#/novidogadaj'
   },
-   {
+  {
     title: 'Prikaz događaja',
     caption: 'Prikaz događaja',
     icon: 'favorite',
     link: '#/dogadaji'
   },
-    {
+  {
     title: 'Unos pitanja za događaj',
     caption: 'Unos pitanja za događaj',
     icon: 'forum',
@@ -66,16 +70,20 @@ const linksList = [
     title: 'Unos slika za događaj korisnika',
     caption: 'Unos slika za događaj korisnika',
     icon: 'image',
-    link: '#/dogadajislike'
+    link: '#/dogadajislikeuser'
   },
 
-  
-
+  {
+    title: 'Unos komentara',
+    caption: 'Unos komentara',
+    icon: 'comment',
+    link: '#/unoskomentara'
+  }
 ]
 
 const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer() {
+function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>
