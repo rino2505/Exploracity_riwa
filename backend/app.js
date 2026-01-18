@@ -59,7 +59,7 @@ app.post("/login", (req, res) => {
 
 // GET – popis događaja
 app.get("/dogadaji", (req, res) => {
-    connection.query("SELECT ID_dogadaja, Naziv_dogadaja FROM Dogadaj", (err, result) => {
+    connection.query("SELECT ID_dogadaja, Naziv_dogadaja,Opis_dogadaja FROM Dogadaj", (err, result) => {
         if (err) return res.status(500).send(err);
         res.send(result);
     });
