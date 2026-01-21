@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@capacitor/android": "^6.2.1"
+  },
+  "name": "exploracity",
+  "version": "0.0.1",
+  "description": "A Quasar Project",
+  "author": ""
+}

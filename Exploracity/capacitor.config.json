@@ -1,0 +1,5 @@
+{
+  "appId": "com.exploracity.app",
+  "appName": "Exploracity",
+  "webDir": "dist/spa"
+}
