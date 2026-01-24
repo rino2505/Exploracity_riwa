@@ -32,12 +32,6 @@ import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
-  {
-    title: 'Unos novih događaja',
-    caption: 'Unos novih događaja',
-    icon: 'favorite',
-    link: '#/novidogadaj'
-  },
    {
     title: 'Prikaz događaja',
     caption: 'Prikaz događaja',
@@ -57,17 +51,17 @@ const linksList = [
     link: '#/login'
   },
   {
-    title: 'Unos slika za događaj organizatora',
-    caption: 'Unos slika za događaj organizatora',
-    icon: 'image',
-    link: '#/dogadajislike'
-  },
-  {
     title: 'Unos slika za događaj korisnika',
     caption: 'Unos slika za događaj korisnika',
     icon: 'image',
     link: '#/dogadajislikeuser'
   },
+  {
+    title: 'Unos komentara',
+    caption: 'Unos komentara',
+    icon: 'comment',
+    link: '#/unoskomentara'
+  }
 
   
 

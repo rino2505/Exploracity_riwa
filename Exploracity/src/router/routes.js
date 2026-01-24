@@ -9,9 +9,8 @@ const routes = [
   
       { path: 'unospitanja', component: () => import('pages/UnosPitanjaPage.vue') },
       { path: 'dogadaji', component: () => import('pages/PrikazDogadajaPage.vue') },
-      { path: 'novidogadaj', component: () => import('pages/UnosDogadajaPage.vue') },
-      { path: '/dogadajislike', component: () => import('pages/DogadajiPage.vue') },
-      { path: '/dogadajislikeuser', component: () => import('pages/DogadajiPageUser.vue') }
+      { path: '/dogadajislikeuser', component: () => import('pages/DogadajiPageUser.vue') },
+      { path: 'unoskomentara', component: () => import('pages/UnosKomentaraPage.vue') }
 
     ],
   },
@@ -23,7 +22,9 @@ const routes = [
     children: [
 
       { path: 'login', component: () => import('pages/IndexPage.vue') }, 
-      { path: 'odgovori', component: () => import('pages/OdgovoriPage.vue') }
+      { path: 'odgovori', component: () => import('pages/OdgovoriPage.vue') },
+      { path: 'novidogadaj', component: () => import('pages/UnosDogadajaPage.vue') },
+      { path: 'dogadajislike', component: () => import('pages/DogadajiPage.vue') },
     ],
   },
 

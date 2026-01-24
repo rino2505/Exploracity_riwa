@@ -159,11 +159,6 @@ app.get('/api/questions', (req, res) => {
   });
 });
 
-app.listen(port, () => {
-    console.log(`Server pokrenut na http://localhost:${port}`);
-});
-
-
 
 app.get('/api/admin/pitanja-bez-odgovora', (req, res) => {
   const { idOrganizatora } = req.query; 
@@ -199,4 +194,57 @@ app.post('/api/admin/odgovori', (req, res) => {
     }
     res.json({ status: 'success' });
   });
+});
+
+// GET komentari po događaju
+app.get("/comments", (req, res) => {
+    const { eventId } = req.query;
+    let sql =
+        "SELECT ID_komentara, Sadrzaj_komentara, ID_korisnika, ID_dogadaja, Datum_unosa FROM Komentar";
+    const params = [];
+
+    if (eventId) {
+        sql += " WHERE ID_dogadaja = ?";
+        params.push(eventId);
+    }
+
+    sql += " ORDER BY ID_komentara DESC";
+
+    connection.query(sql, params, (err, results) => {
+        if (err) return res.status(500).json({ error: "Database error" });
+        res.json(results);
+    });
+});
+
+// POST novi komentar
+app.post("/comments", (req, res) => {
+    const { comment, eventId, userId } = req.body;
+
+    if (!comment || !eventId)
+        return res
+            .status(400)
+            .json({ error: "Komentar i ID događaja su obavezni" });
+
+    const sql =
+        "INSERT INTO Komentar (Sadrzaj_komentara, ID_korisnika, ID_dogadaja) VALUES (?, ?, ?)";
+    const values = [comment, userId || null, eventId];
+
+    connection.query(sql, values, (err, result) => {
+        if (err) return res.status(500).json({ error: "Database error" });
+        res.json({ status: "success", insertedId: result.insertId });
+    });
+});
+
+app.get("/api/comments", (req, res) => {
+    const sql = "SELECT ID_dogadaja, Naziv_dogadaja FROM Dogadaj";
+
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: "Database error" });
+        res.json(results);
+    });
+});
+
+
+app.listen(port, () => {
+    console.log(`Server pokrenut na http://localhost:${port}`);
 });

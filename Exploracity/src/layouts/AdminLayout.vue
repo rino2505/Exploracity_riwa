@@ -65,6 +65,18 @@ const linksList = [
     icon: 'question_answer',
     link: '#/admin/odgovori',
   },
+    {
+    title: 'Unos novih događaja',
+    caption: 'Unos novih događaja',
+    icon: 'favorite',
+    link: '#/admin/novidogadaj'
+  },
+    {
+    title: 'Unos slika za događaj',
+    caption: 'Unos slika za događaj',
+    icon: 'image',
+    link: '#/admin/dogadajislike'
+  }
 ]
 
 onMounted(() => {
