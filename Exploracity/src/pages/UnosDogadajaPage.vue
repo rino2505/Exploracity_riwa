@@ -10,14 +10,6 @@
       <q-input v-model="noviDogadaj.vrijeme" label="Vrijeme događaja" outlined />
       <q-input v-model="noviDogadaj.opis" label="Opis" type="textarea" outlined />
 
-      <q-file
-        v-model="noviDogadaj.slika"
-        label="Odaberi sliku"
-        accept="image/*"
-        filled
-        clearable
-      />
-
       
 
       <div class="row q-gutter-sm justify-center">
@@ -43,7 +35,6 @@ const noviDogadaj = ref({
   datum: '',
   vrijeme: '',
   opis: '',
-  slika: null,
 })
 
 async function spremiDogadaj() {
@@ -59,7 +50,6 @@ async function spremiDogadaj() {
         datum: noviDogadaj.value.datum,
         vrijeme: noviDogadaj.value.vrijeme,
         opis: noviDogadaj.value.opis,
-        slika: noviDogadaj.value.slika // može biti null ili tekst
       })
     });
 
@@ -86,7 +76,6 @@ function odustani() {
     datum: '',
     vrijeme: '',
     opis: '',
-    slika: null,
   }
 }
 </script>
