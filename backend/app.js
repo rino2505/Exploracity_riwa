@@ -268,6 +268,56 @@ app.post('/unosdogadaja', (req, res) => {
     });
 });
 
+// ===============================
+// ADMIN: KOMENTARI BEZ ODGOVORA
+// ===============================
+app.get('/api/admin/komentari-bez-odgovora', (req, res) => {
+  const { idOrganizatora } = req.query;
+
+  const sql = `
+    SELECT k.ID_komentara, k.Sadrzaj_komentara, k.Datum_unosa, k.ID_dogadaja,
+           d.Naziv_dogadaja
+    FROM Komentar k
+    JOIN Dogadaj d ON k.ID_dogadaja = d.ID_dogadaja
+    LEFT JOIN Odgovor_na_komentar ok ON k.ID_komentara = ok.ID_komentara
+    WHERE ok.ID_odgovora_k IS NULL
+      AND d.ID_organizatora = ?
+    ORDER BY k.ID_komentara DESC
+  `;
+
+  connection.query(sql, [idOrganizatora], (err, results) => {
+    if (err) {
+      console.error('Greška pri dohvaćanju komentara bez odgovora:', err);
+      return res.status(500).json({ error: 'Greška pri dohvatu komentara' });
+    }
+    res.json(results);
+  });
+});
+
+// ===============================
+// ADMIN: SPREMI ODGOVOR NA KOMENTAR
+// ===============================
+app.post('/api/admin/odgovori-na-komentar', (req, res) => {
+  const { sadrzaj, idKomentara, idOrganizatora } = req.body;
+
+  if (!sadrzaj || !idKomentara || !idOrganizatora) {
+    return res.status(400).json({ error: 'Nedostaju podaci (sadrzaj, idKomentara, idOrganizatora)' });
+  }
+
+  const sql = `
+    INSERT INTO Odgovor_na_komentar (Sadrzaj_odgovora, ID_komentara, ID_organizatora)
+    VALUES (?, ?, ?)
+  `;
+
+  connection.query(sql, [sadrzaj, idKomentara, idOrganizatora], (err) => {
+    if (err) {
+      console.error('Greška pri spremanju odgovora na komentar:', err);
+      return res.status(500).json({ error: 'Greška pri spremanju odgovora' });
+    }
+    res.json({ status: 'success' });
+  });
+});
+
 app.listen(port, () => {
     console.log(`Server pokrenut na http://localhost:${port}`);
 });
