@@ -24,7 +24,6 @@ export default {
       { name: 'datum', label: 'Datum događaja', field: 'Datum_dogadaja', align: 'left' },
       { name: 'vrijeme', label: 'Vrijeme događaja', field: 'Vrijeme_dogadaja' },
       { name: 'opis', label: 'Opis događaja', field: 'Opis_dogadaja' },
-      { name: 'slika', label: 'Slika', field: 'Slika_dogadaja', sortable: true }
     ]
 
     async function ucitajDogadaje() {
