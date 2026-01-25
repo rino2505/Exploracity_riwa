@@ -246,26 +246,23 @@ app.get("/api/comments", (req, res) => {
 
 
 // POST ruta za unos događaja
-app.post('/unosdogadaja', (req, res) => {
-    const { naziv, lokacija, datum, vrijeme, opis, slika } = req.body;
+app.post('/novidogadaj', (req, res) => {
+    const { naziv, lokacija, datum, vrijeme, opis } = req.body;
 
-    console.log("Primljeni podaci:", req.body); // debug log
+    const ID_organizatora = req.session.korisnik.ID_organizatora;
+
+    console.log("Organizator iz sessiona:", ID_organizatora);
 
     const sql = `
-        INSERT INTO Dogadaj
-        (Naziv_dogadaja, Lokacija_dogadaja, Datum_dogadaja, Vrijeme_dogadaja, Opis_dogadaja)
-        VALUES (?, ?, ?, ?, ?)
+      INSERT INTO Dogadaj
+      (Naziv_dogadaja, Lokacija_dogadaja, Datum_dogadaja, Vrijeme_dogadaja, Opis_dogadaja, ID_organizatora)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    connection.query(sql, [naziv, lokacija, datum, vrijeme, opis], (err, result) => {
-        if (err) {
-            console.error("Greška pri unosu u bazu:", err);
-            return res.status(500).json({ message: "Greška pri unosu" });
-        }
-
-        console.log("Uspješno spremljeno:", result);
-        res.json({ message: "Događaj spremljen", id: result.insertId });
-    });
+    connection.query
+    (sql,
+      [naziv, lokacija, datum, vrijeme, opis, ID_organizatora],
+    );
 });
 
 // ===============================
