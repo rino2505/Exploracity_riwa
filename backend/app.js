@@ -245,6 +245,29 @@ app.get("/api/comments", (req, res) => {
 });
 
 
+// POST ruta za unos događaja
+app.post('/unosdogadaja', (req, res) => {
+    const { naziv, lokacija, datum, vrijeme, opis, slika } = req.body;
+
+    console.log("Primljeni podaci:", req.body); // debug log
+
+    const sql = `
+        INSERT INTO Dogadaj
+        (Naziv_dogadaja, Lokacija_dogadaja, Datum_dogadaja, Vrijeme_dogadaja, Opis_dogadaja)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    connection.query(sql, [naziv, lokacija, datum, vrijeme, opis], (err, result) => {
+        if (err) {
+            console.error("Greška pri unosu u bazu:", err);
+            return res.status(500).json({ message: "Greška pri unosu" });
+        }
+
+        console.log("Uspješno spremljeno:", result);
+        res.json({ message: "Događaj spremljen", id: result.insertId });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server pokrenut na http://localhost:${port}`);
 });
