@@ -13,9 +13,8 @@
         
         <q-input 
           standout 
-          v-model="Username_organizatora" 
-          placeholder="Korisničko ime" 
-          class="q-mt-md"
+          v-model="Email_organizatora" 
+          placeholder="Email" 
         />
         
         <q-input 
@@ -83,7 +82,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 // Varijable za Login
-const Username_organizatora = ref('')
+const Email_organizatora = ref('')
 const Lozinka_organizatora = ref('')
 
 // Varijable za Sign Up
@@ -93,57 +92,51 @@ const email = ref('')
 
 const isPwd = ref(true)
 
-// Tvoj Backend Port (Provjeri radi li app.js na 3000)
 const API_URL = 'http://localhost:3000'
 
 /**
  * LOGIKA ZA LOGIN
  */
 const login = async () => {
-  if (!Username_organizatora.value || !Lozinka_organizatora.value) {
-    Notify.create({ type: 'warning', message: 'Unesite sve podatke' })
+  if (!Email_organizatora.value || !Lozinka_organizatora.value) {
+    Notify.create({ type: 'warning', message: 'Unesite email i lozinku' })
     return
   }
 
   try {
     const res = await axios.post(`${API_URL}/login`, {
-      Username_organizatora: Username_organizatora.value,
+      Email_organizatora: Email_organizatora.value,
       Lozinka_organizatora: Lozinka_organizatora.value
     })
 
     if (res.status === 200) {
-      // Spremanje tokena/podataka
+      // 1. Spremanje podataka
       localStorage.setItem('token', JSON.stringify(res.data))
       
-      console.log("Prijava uspješna, preusmjeravam...")
-      
-      // Navigacija na admin sučelje
-      router.push('/admin/odgovori')
-      
+      // 2. Prikaz notifikacije
       Notify.create({ 
         type: 'positive', 
-        message: `Dobrodošli, ${res.data.ime}!` 
+        message: `Dobrodošli, ${res.data.ime}!`,
+        position: 'top',
+        timeout: 1000 // Traje 1 sekundu
       })
+      
+      // 3. Odgoda preusmjeravanja da se notifikacija stigne prikazati
+      setTimeout(() => {
+        router.push('/admin/odgovori')
+      }, 1000)
     }
   } catch (err) {
-    // Ako koristiš console.log(err), ESLint se neće žaliti
     console.error("Greška pri loginu:", err)
     Notify.create({
       type: 'negative',
-      message: err.response?.data || 'Pogrešno korisničko ime ili lozinka'
+      message: 'Pogrešni podaci za prijavu',
+      position: 'top'
     })
   }
 }
 
-/**
- * LOGIKA ZA SIGNUP
- */
 const signup = async () => {
-  try {
-    Notify.create({ type: 'info', message: 'Registracija trenutno nije dostupna' })
-  } catch {
-    // Ovdje sam maknuo (err) jer se ne koristi - rješava ESLint error
-    Notify.create({ type: 'negative', message: 'Greška pri registraciji' })
-  }
+  Notify.create({ type: 'info', message: 'Registracija trenutno nije dostupna' })
 }
 </script>

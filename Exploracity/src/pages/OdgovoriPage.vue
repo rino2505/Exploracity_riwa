@@ -62,7 +62,7 @@
             
             <div class="left-meta text-grey-6 row items-center no-wrap q-mr-md q-mt-xs">
               <span class="text-body2 text-weight-medium">
-                {{ formatRelativeTime(q.Vrijeme_postavljana) }}
+                {{ formatRelativeTime(q.Datum_unosa_p) }}
               </span>
             </div>
 
@@ -141,7 +141,7 @@ import { Notify } from 'quasar'
 
 const questions = ref([])
 const events = ref([]) 
-const selectedDogadaj = ref(null) // null po zadanim postavkama znači "Svi događaji"
+const selectedDogadaj = ref(null) 
 const filterStatus = ref('unanswered')
 
 const answers = ref({})
@@ -153,40 +153,15 @@ const isSending = ref(false)
 // --- TIMESTAMP KONVERTER ---
 const formatRelativeTime = (timestamp) => {
   if (!timestamp) return '---'
-
   const now = new Date()
-  let questionTime
-
-  if (typeof timestamp === 'string') {
-    const cleanStr = timestamp.replace('T', ' ').replace('.000Z', '')
-    const parts = cleanStr.split(' ')
-    
-    if (parts.length === 2) {
-      const dateParts = parts[0].split('-')
-      const timeParts = parts[1].split(':')
-      
-      questionTime = new Date(Date.UTC(
-        parseInt(dateParts[0]),
-        parseInt(dateParts[1]) - 1, 
-        parseInt(dateParts[2]),
-        parseInt(timeParts[0]),
-        parseInt(timeParts[1]),
-        parseInt(timeParts[2] || 0)
-      ))
-    } else {
-      questionTime = new Date(timestamp)
-    }
-  } else {
-    questionTime = new Date(timestamp)
-  }
-
+  const questionTime = new Date(timestamp)
+  
   if (isNaN(questionTime.getTime())) return '---'
 
   const diffInMs = now.getTime() - questionTime.getTime()
   const diffInSeconds = Math.floor(diffInMs / 1000)
 
   if (diffInSeconds < 60) return 'sada'
-
   const diffInMinutes = Math.floor(diffInSeconds / 60)
   const diffInHours = Math.floor(diffInMinutes / 60)
   const diffInDays = Math.floor(diffInHours / 24)
@@ -195,17 +170,23 @@ const formatRelativeTime = (timestamp) => {
   if (diffInHours < 24) return `${diffInHours}h`
   if (diffInDays === 1) return 'jučer'
   if (diffInDays < 7) return `${diffInDays}d`
-  
   return questionTime.toLocaleDateString('hr-HR')
 }
 
+// ISPRAVLJENO: Dohvaća samo događaje prijavljenog organizatora
 const fetchEvents = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/popis-dogadaja`)
-    events.value = response.data
+    const adminData = JSON.parse(localStorage.getItem('token'));
+    if (!adminData || !adminData.ID_organizatora) return;
+
+    const response = await axios.get(`${API_URL}/api/admin/moji-dogadaji`, {
+      params: { idOrganizatora: adminData.ID_organizatora }
+    });
+    
+    events.value = response.data;
   } catch (error) {
-    console.error('Failed to load events:', error)
-    Notify.create({ type: 'negative', message: 'Greška pri učitavanju događaja.' })
+    console.error('Failed to load events:', error);
+    Notify.create({ type: 'negative', message: 'Greška pri učitavanju vaših događaja.' });
   }
 }
 
@@ -239,45 +220,32 @@ const loadQuestions = async () => {
     questions.value = res.data;
 
   } catch (error) {
-    console.error('Greška pri dohvaćanju filtriranih pitanja:', error);
+    console.error('Greška pri dohvaćanju pitanja:', error);
     questions.value = [];
-    Notify.create({ 
-      type: 'negative', 
-      message: 'Greška pri učitavanju pitanja s poslužitelja.' 
-    });
   }
 };
 
 const toggleAnswerInput = (idPitanja) => {
-  if (activeInputId.value === idPitanja) {
-    activeInputId.value = null 
-  } else {
-    activeInputId.value = idPitanja 
-    if (!answers.value[idPitanja]) {
-      answers.value[idPitanja] = '' 
-    }
+  activeInputId.value = (activeInputId.value === idPitanja) ? null : idPitanja
+  if (activeInputId.value && !answers.value[idPitanja]) {
+    answers.value[idPitanja] = ''
   }
 }
 
 const sendAnswer = async (idPitanja) => {
   const sadrzaj = answers.value[idPitanja]
-  if (!sadrzaj || sadrzaj.trim() === '') {
+  if (!sadrzaj?.trim()) {
     Notify.create({ type: 'warning', message: 'Odgovor ne može biti prazan.' })
     return
   }
 
-  if (isSending.value) return
-  
   const user = JSON.parse(localStorage.getItem('token'))
-  const idOrganizatora = user.ID_organizatora
-
   try {
     isSending.value = true 
-    
     await axios.post(`${API_URL}/api/admin/odgovori`, {
       sadrzaj: sadrzaj,
       idPitanja: idPitanja,
-      idOrganizatora: idOrganizatora
+      idOrganizatora: user.ID_organizatora
     })
     
     Notify.create({ type: 'positive', message: 'Odgovor uspješno spremljen!' })
@@ -290,9 +258,10 @@ const sendAnswer = async (idPitanja) => {
     isSending.value = false 
   }
 }
+
 onMounted(() => {
   fetchEvents()
-  loadQuestions() // Po defaultu se učitavaju svi događaji jer je selectedDogadaj postavljen na null
+  loadQuestions()
 })
 </script>
 

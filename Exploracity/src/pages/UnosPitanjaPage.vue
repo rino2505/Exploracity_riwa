@@ -178,44 +178,36 @@ export default {
     }
 
     const submitQuestion = async () => {
-      if (isSending.value) return
+  if (isSending.value) return;
 
-      if (!upit.value.trim() || !selectedDogadaj.value) {
-        Notify.create({
-          type: 'warning',
-          message: 'Molimo unesite pitanje i odaberite događaj.'
-        })
-        return
-      }
+  if (!upit.value.trim() || !selectedDogadaj.value) {
+    Notify.create({ type: 'warning', message: 'Molimo unesite pitanje i odaberite događaj.' });
+    return;
+  }
 
-      try {
-        isSending.value = true
+  try {
+    isSending.value = true;
 
-        await axios.post(`${API_URL}/api/pitanja`, {
-          question: upit.value,
-          eventId: selectedDogadaj.value.ID_dogadaja,
-          eventName: selectedDogadaj.value.Naziv_dogadaja
-        })
+    // Šaljemo ključeve koje backend očekuje (sadrzaj, idPosjetitelja, idDogadaja)
+    await axios.post(`${API_URL}/api/pitanja`, {
+      sadrzaj: upit.value,
+      idPosjetitelja: 1, // Zamijeni s pravim ID-om iz prijave kad je implementiraš
+      idDogadaja: selectedDogadaj.value.ID_dogadaja
+    });
 
-        Notify.create({
-          type: 'positive',
-          message: 'Pitanje uspješno poslano!'
-        })
-
-        const currentEvent = selectedDogadaj.value
-        upit.value = '' 
-        await selectEvent(currentEvent)
-        
-      } catch (error) {
-        console.error('Failed to send question:', error)
-        Notify.create({
-          type: 'negative',
-          message: 'Greška prilikom slanja pitanja.'
-        })
-      } finally {
-        isSending.value = false
-      }
-    }
+    Notify.create({ type: 'positive', message: 'Pitanje uspješno poslano!' });
+    
+    upit.value = ''; 
+    // Osvježi listu pitanja za isti događaj
+    await selectEvent(selectedDogadaj.value);
+    
+  } catch (error) {
+    console.error('Greška:', error);
+    Notify.create({ type: 'negative', message: 'Greška prilikom slanja.' });
+  } finally {
+    isSending.value = false;
+  }
+};
 
     onMounted(() => {
       fetchEvents()

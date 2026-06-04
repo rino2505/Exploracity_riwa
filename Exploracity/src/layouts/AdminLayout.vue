@@ -63,19 +63,19 @@ const linksList = [
     title: 'Odgovori na pitanja',
     caption: 'Odgovaranje na pitanja korisnika',
     icon: 'question_answer',
-    link: '#/admin/odgovori',
+    link: '/admin/odgovori',
   },
     {
     title: 'Unos novih događaja',
     caption: 'Unos novih događaja',
     icon: 'favorite',
-    link: '#/admin/novidogadaj'
+    link: '/admin/novidogadaj'
   },
     {
     title: 'Unos slika za događaj',
     caption: 'Unos slika za događaj',
     icon: 'image',
-    link: '#/admin/dogadajislike'
+    link: '/admin/dogadajislike'
   }
 ]
 
