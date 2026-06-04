@@ -1,75 +1,17 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar class="bg-white">
-        <q-btn icon="menu" color="black" flat aria-label="Menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title class="row items-center">
-          <img class="q-ma-md"
-            alt="Quasar logo"
-            src="~assets/exploracity-horizontal-logo.svg"
-            style="width: 200px; height: 40px"
-          />
-        </q-toolbar-title>
+      <q-toolbar class="bg-white">        
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer>
-
+   
     <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>
+
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksList = [
-   {
-    title: 'Prikaz događaja',
-    caption: 'Prikaz događaja',
-    icon: 'favorite',
-    link: '#/dogadaji'
-  },
-    {
-    title: 'Unos pitanja za događaj',
-    caption: 'Unos pitanja za događaj',
-    icon: 'forum',
-    link: '#/unospitanja'
-  },
-  {
-    title: 'Login stranica',
-    caption: 'Login stranica',
-    icon: 'login',
-    link: '#/login'
-  },
-  {
-    title: 'Unos slika za događaj korisnika',
-    caption: 'Unos slika za događaj korisnika',
-    icon: 'image',
-    link: '#/dogadajislikeuser'
-  },
-  {
-    title: 'Unos komentara',
-    caption: 'Unos komentara',
-    icon: 'comment',
-    link: '#/unoskomentara'
-  }
-
-  
-
-]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+<script>
 </script>

@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-          Exploracity (Administracijsko sučelje)
+          Exploracity (Posjetiteljsko sučelje)
         </q-toolbar-title>
 
         <q-space />
@@ -66,27 +66,34 @@ const router = useRouter()
 
 const ime_korisnika = ref('')
 const leftDrawerOpen = ref(false)
-
 const linksList = [
-  {
-    title: 'Odgovori na pitanja',
-    caption: 'Odgovaranje na pitanja korisnika',
-    icon: 'question_answer',
-    link: '/admin/odgovori'
-  },
-  {
-    title: 'Unos novih događaja',
-    caption: 'Unos novih događaja',
+   {
+    title: 'Prikaz događaja',
+    caption: 'Prikaz događaja',
     icon: 'favorite',
-    link: '/admin/novidogadaj'
+    link: '/pos/dogadaji'
+  },
+    {
+    title: 'Unos pitanja za događaj',
+    caption: 'Unos pitanja za događaj',
+    icon: 'forum',
+    link: '/pos/unospitanja'
   },
   {
-    title: 'Unos slika za događaj',
-    caption: 'Unos slika za događaj',
+    title: 'Unos slika za događaj korisnika',
+    caption: 'Unos slika za događaj korisnika',
     icon: 'image',
-    link: '/admin/dogadajislike'
+    link: '/pos/dogadajislikeuser'
+  },
+  {
+    title: 'Unos komentara',
+    caption: 'Unos komentara',
+    icon: 'comment',
+    link: '/pos/unoskomentara'
   }
+
 ]
+
 
 onMounted(() => {
   const stored = localStorage.getItem('token')
@@ -97,7 +104,7 @@ onMounted(() => {
     return
   }
 
-  if (token.uloga !== 'admin') {
+  if (token.uloga !== 'posjetitelj') {
     router.replace('/')
     return
   }

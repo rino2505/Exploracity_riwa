@@ -30,8 +30,8 @@ connection.connect(function (err) {
   console.log("Uspješno povezano na bazu!");
 });
 
-app.post("/login", (req, res) => {
-    console.log(req.body);
+app.post("/loginorganizatora", (req, res) => {
+     console.log("BODY ORGANIZATOR:", req.body); 
 
     const email = req.body.Email_organizatora || req.body.email;
     const lozinka = req.body.Lozinka_organizatora || req.body.password;
@@ -56,6 +56,34 @@ app.post("/login", (req, res) => {
         }
     });
 });
+
+app.post("/loginposjetitelja", (req, res) => {
+     console.log("BODY POSJETITELJ:", req.body); ;
+
+    const email = req.body.Email_posjetitelja || req.body.email;
+    const lozinka = req.body.Lozinka_posjetitelja || req.body.password;
+
+    const sql = `
+        SELECT * FROM Posjetitelj
+        WHERE Email_posjetitelja = ? AND Lozinka_posjetitelja = ?
+    `;
+
+    connection.query(sql, [email, lozinka], (err, results) => {
+        if (err) return res.status(500).send("Greška");
+
+        if (results.length === 1) {
+            res.json({
+                ID_posjetitelja: results[0].ID_posjetitelja,
+                ime: results[0].Ime_posjetitelja,
+                prezime: results[0].Prezime_posjetitelja,
+                uloga: "posjetitelj"
+            });
+        } else {
+            res.status(401).send("Krivi login");
+        }
+    });
+});
+
 
 // GET – popis događaja
 app.get("/dogadaji", (req, res) => {
@@ -165,7 +193,7 @@ app.post("/unosdogadaja", (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        console.log("MYSQL ERROR:", err); // 🔥 OVO JE KLJUČNO
+        console.log("MYSQL ERROR:", err); 
         return res.status(500).json({ message: "Greška pri unosu" });
       }
 

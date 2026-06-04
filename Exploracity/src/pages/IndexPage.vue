@@ -1,75 +1,124 @@
 <template>
-  <q-page class="column flex items-center">
-    <img
-      alt="Exploracity logo"
-      src="~assets/exploracity-logo.svg"
-      style="width: 300px; height: 200px"
-      class="q-mt-lg"
-    />
-    
-    <div class="row flex items-start justify-evenly full-width q-mt-xl">
-      <div class="flex column items-center q-gutter-sm">
-        <div class="text-h6">Login</div>
-        
-        <q-input 
-          standout 
-          v-model="Email_organizatora" 
-          placeholder="Email" 
-        />
-        
-        <q-input 
-          standout 
-          placeholder="Lozinka" 
-          v-model="Lozinka_organizatora"  
-          :type="isPwd ? 'password' : 'text'" 
-          class="q-mt-md"
-          @keyup.enter="login"
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            />
-          </template>
-        </q-input>
-        
-        <q-btn 
-          push 
-          color="black" 
-          label="Login" 
-          class="q-mt-md" 
-          @click="login" 
-        />
-      </div>
+  <q-page class="flex flex-center column">
 
-      <div class="bg-black" style="width: 2px; height: 300px;"></div>
-
-      <div class="flex column items-center q-gutter-sm">
-        <div class="text-h6">Sign Up</div>
-        
-        <q-input standout v-model="signupUsername" placeholder="Username" class="q-mt-md"/>
-        <q-input v-model="email" placeholder="Email" standout type="email" class="q-mt-md"/>
-        
-        <q-input 
-          standout 
-          placeholder="Password" 
-          v-model="signupPassword"  
-          :type="isPwd ? 'password' : 'text'" 
-          class="q-mt-md"
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            />
-          </template>
-        </q-input>
-        
-        <q-btn push color="black" label="Sign Up" class="q-mt-md" @click="signup" />
-      </div>
+    <!-- LOGO -->
+    <div class="q-mb-xl">
+      <img
+        alt="Exploracity logo"
+        src="~assets/exploracity-logo.svg"
+        style="width: 300px; height: 200px"
+      />
     </div>
+
+    <div class="row full-width justify-evenly q-gutter-xl">
+
+      <!-- ORGANIZATOR -->
+      <q-card class="col-12 col-md-3 q-pa-md">
+        <div class="text-h6 text-center q-mb-md">Login organizatora</div>
+
+        <q-input standout v-model="Email_organizatora" placeholder="Email" />
+        
+        <q-input
+          standout
+          v-model="Lozinka_organizatora"
+          placeholder="Lozinka"
+          :type="isPwd ? 'password' : 'text'"
+          class="q-mt-md"
+          @keyup.enter="loginorganizatora"
+        >
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
+
+        <q-btn
+          class="full-width q-mt-md"
+          color="black"
+          label="Login"
+          @click="loginorganizatora"
+        />
+      </q-card>
+
+      <!-- POSJETITELJ -->
+      <q-card class="col-12 col-md-3 q-pa-md">
+        <div class="text-h6 text-center q-mb-md">Login posjetitelja</div>
+
+        <q-input standout v-model="Email_posjetitelja" placeholder="Email" />
+
+        <q-input
+          standout
+          v-model="Lozinka_posjetitelja"
+          placeholder="Lozinka"
+          :type="isPwd ? 'password' : 'text'"
+          class="q-mt-md"
+          @keyup.enter="loginposjetitelja"
+        >
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
+
+        <q-btn
+          class="full-width q-mt-md"
+          color="black"
+          label="Login"
+          @click="loginposjetitelja"
+        />
+      </q-card>
+
+      <!-- SIGN UP -->
+      <q-card class="col-12 col-md-3 q-pa-md">
+
+        <div class="text-h6 text-center q-mb-md">Sign Up</div>
+
+        <q-input
+          standout
+          v-model="signupUsername"
+          placeholder="Username"
+        />
+
+        <q-input
+          standout
+          v-model="email"
+          placeholder="Email"
+          type="email"
+          class="q-mt-md"
+        />
+
+        <q-input
+          standout
+          v-model="signupPassword"
+          placeholder="Password"
+          :type="isPwd ? 'password' : 'text'"
+          class="q-mt-md"
+        >
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
+
+        <q-btn
+          class="full-width q-mt-md"
+          color="black"
+          label="Sign Up"
+          @click="signup"
+        />
+      </q-card>
+
+    </div>
+
   </q-page>
 </template>
 
@@ -84,6 +133,8 @@ const router = useRouter()
 // Varijable za Login
 const Email_organizatora = ref('')
 const Lozinka_organizatora = ref('')
+const Email_posjetitelja = ref('')
+const Lozinka_posjetitelja = ref('')
 
 // Varijable za Sign Up
 const signupUsername = ref('')
@@ -95,16 +146,16 @@ const isPwd = ref(true)
 const API_URL = 'http://localhost:3000'
 
 /**
- * LOGIKA ZA LOGIN
+ * LOGIKA ZA LOGIN ORGANIZATORA
  */
-const login = async () => {
+const loginorganizatora = async () => {
   if (!Email_organizatora.value || !Lozinka_organizatora.value) {
     Notify.create({ type: 'warning', message: 'Unesite email i lozinku' })
     return
   }
 
   try {
-    const res = await axios.post(`${API_URL}/login`, {
+    const res = await axios.post(`${API_URL}/loginorganizatora`, {
       Email_organizatora: Email_organizatora.value,
       Lozinka_organizatora: Lozinka_organizatora.value
     })
@@ -124,6 +175,48 @@ const login = async () => {
       // 3. Odgoda preusmjeravanja da se notifikacija stigne prikazati
       setTimeout(() => {
         router.push('/admin/odgovori')
+      }, 1000)
+    }
+  } catch (err) {
+    console.error("Greška pri loginu:", err)
+    Notify.create({
+      type: 'negative',
+      message: 'Pogrešni podaci za prijavu',
+      position: 'top'
+    })
+  }
+}
+
+/**
+ * LOGIKA ZA LOGIN POSJETITELJA
+ */
+const loginposjetitelja = async () => {
+  if (!Email_posjetitelja.value || !Lozinka_posjetitelja.value) {
+    Notify.create({ type: 'warning', message: 'Unesite email i lozinku' })
+    return
+  }
+
+  try {
+    const res = await axios.post(`${API_URL}/loginposjetitelja`, {
+      Email_posjetitelja: Email_posjetitelja.value,
+      Lozinka_posjetitelja: Lozinka_posjetitelja.value
+    })
+
+    if (res.status === 200) {
+      // 1. Spremanje podataka
+      localStorage.setItem('token', JSON.stringify(res.data))
+      
+      // 2. Prikaz notifikacije
+      Notify.create({ 
+        type: 'positive', 
+        message: `Dobrodošli, ${res.data.ime}!`,
+        position: 'top',
+        timeout: 1000 // Traje 1 sekundu
+      })
+      
+      // 3. Odgoda preusmjeravanja da se notifikacija stigne prikazati
+      setTimeout(() => {
+        router.push('/pos/dogadaji/')
       }, 1000)
     }
   } catch (err) {
