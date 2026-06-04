@@ -66,50 +66,50 @@ const router = useRouter()
 
 const ime_korisnika = ref('')
 const leftDrawerOpen = ref(false)
+
 const linksList = [
-   {
+  {
     title: 'Prikaz događaja',
     caption: 'Prikaz događaja',
-    icon: 'favorite',
+    icon: 'location',
     link: '/pos/dogadaji'
   },
-    {
+  {
     title: 'Unos pitanja za događaj',
     caption: 'Unos pitanja za događaj',
     icon: 'forum',
     link: '/pos/unospitanja'
   },
   {
-    title: 'Unos slika za događaj korisnika',
-    caption: 'Unos slika za događaj korisnika',
-    icon: 'image',
-    link: '/pos/dogadajislikeuser'
-  },
-  {
     title: 'Unos komentara',
     caption: 'Unos komentara',
     icon: 'comment',
     link: '/pos/unoskomentara'
+  },
+  {
+    title: 'Stvaranje plana',
+    caption: 'Stvaranje plana',
+    icon: 'favorite',
+    link: '/pos/unosplana'
+  },
+  {
+    title: 'Pregled planova',
+    caption: 'Pregled planova',
+    icon: 'favorite',
+    link: '/pos/pregledplanova'
   }
-
 ]
-
 
 onMounted(() => {
   const stored = localStorage.getItem('token')
   const token = stored ? JSON.parse(stored) : null
 
-  if (!token) {
+  if (!token || token.uloga !== 'posjetitelj') {
     router.replace('/')
     return
   }
 
-  if (token.uloga !== 'posjetitelj') {
-    router.replace('/')
-    return
-  }
-
-  ime_korisnika.value = token.ime || token.korime || 'Korisnik'
+  ime_korisnika.value = token.ime || 'Korisnik'
 })
 
 const logout = () => {
