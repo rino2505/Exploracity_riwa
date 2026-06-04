@@ -133,12 +133,45 @@ app.get("/api/prikazidogadaje", (req, res) => {
 });
 
 app.post("/unosdogadaja", (req, res) => {
-  const { naziv, lokacija, datum, vrijeme, opis, slika } = req.body;
-  const sql = `INSERT INTO Dogadaj (Naziv_dogadaja, Lokacija_dogadaja, Datum_dogadaja, Vrijeme_dogadaja, Opis_dogadaja, Slika_dogadaja) VALUES (?, ?, ?, ?, ?, ?)`;
-  connection.query(sql, [naziv, lokacija, datum, vrijeme, opis, slika], (err, result) => {
-    if (err) return res.status(500).json({ message: "Greška pri unosu" });
-    res.json({ message: "Događaj uspješno spremljen", id: result.insertId });
-  });
+  const {
+    naziv,
+    lokacija,
+    datumvrijeme,
+    opis
+  } = req.body;
+
+  const status = 'aktivan'; 
+
+  const sql = `
+    INSERT INTO Dogadaj
+    (Naziv_dogadaja,
+     Lokacija_dogadaja,
+     Datum_i_vrijeme_dogadaja,
+     Opis_dogadaja,
+     Status_dogadaja,
+     ID_organizatora)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(
+    sql,
+    [
+      naziv,
+      lokacija,
+      datumvrijeme,
+      opis,
+      status,
+      1
+    ],
+    (err, result) => {
+      if (err) {
+        console.log("MYSQL ERROR:", err); // 🔥 OVO JE KLJUČNO
+        return res.status(500).json({ message: "Greška pri unosu" });
+      }
+
+      res.json({ id: result.insertId });
+    }
+  );
 });
 
 app.post("/api/pitanja", (req, res) => {
