@@ -7,8 +7,7 @@ const routes = [
       { path: 'login', component: () => import('pages/IndexPage.vue') },
       { path: 'unospitanja', component: () => import('pages/UnosPitanjaPage.vue') },
       { path: 'dogadaji', component: () => import('pages/PrikazDogadajaPage.vue') },
-      { path: '/dogadajislikeuser', component: () => import('pages/DogadajiPageUser.vue') },
-      { path: 'unoskomentara', component: () => import('pages/UnosKomentaraPage.vue') }
+      { path: '/dogadajislikeuser', component: () => import('pages/DogadajiPageUser.vue') }
 
     ],
   },

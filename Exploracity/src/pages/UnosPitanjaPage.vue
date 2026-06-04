@@ -75,7 +75,10 @@
 
             <div v-if="q.Sadrzaj_odgovora" class="row items-center no-wrap q-mt-xs text-grey-7">
               <q-icon name="subdirectory_arrow_right" size="sm" class="q-mr-sm text-grey-5" />
-              <span class="text-body2 italic text-grey-8">{{ q.Sadrzaj_odgovora }}</span>
+              <div class="column">
+                <span class="text-caption text-grey-6">{{ q.Ime_organizatora || 'Organizator' }}</span>
+                <span class="text-body2 italic text-grey-8">{{ q.Sadrzaj_odgovora }}</span>
+              </div>
             </div>
           </div>
 
@@ -188,10 +191,17 @@ export default {
   try {
     isSending.value = true;
 
+    // Dohvati ID posjetitelja iz localStorage
+    const userData = JSON.parse(localStorage.getItem('token'));
+    if (!userData || !userData.ID_posjetitelja) {
+      Notify.create({ type: 'warning', message: 'Trebate biti ulogirani kao posjetitelj.' });
+      return;
+    }
+
     // Šaljemo ključeve koje backend očekuje (sadrzaj, idPosjetitelja, idDogadaja)
     await axios.post(`${API_URL}/api/pitanja`, {
       sadrzaj: upit.value,
-      idPosjetitelja: 1, // Zamijeni s pravim ID-om iz prijave kad je implementiraš
+      idPosjetitelja: userData.ID_posjetitelja,
       idDogadaja: selectedDogadaj.value.ID_dogadaja
     });
 

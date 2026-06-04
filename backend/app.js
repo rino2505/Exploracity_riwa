@@ -28,6 +28,27 @@ connection.connect(function (err) {
     return;
   }
   console.log("Uspješno povezano na bazu!");
+  
+  // Kreiraj tablice ako ne postoje
+  const createOdgovorNaPitanjeSQL = `
+    CREATE TABLE IF NOT EXISTS Odgovor_na_pitanje (
+      ID_odgovora INT AUTO_INCREMENT PRIMARY KEY,
+      Sadrzaj_odgovora LONGTEXT NOT NULL,
+      ID_pitanja INT NOT NULL,
+      ID_organizatora INT NOT NULL,
+      Datum_odgovora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (ID_pitanja) REFERENCES Pitanje_za_dogadaj(ID_pitanja),
+      FOREIGN KEY (ID_organizatora) REFERENCES Organizator(ID_organizatora)
+    )
+  `;
+  
+  connection.query(createOdgovorNaPitanjeSQL, (err) => {
+    if (err) {
+      console.error("Greška pri kreiranju tablice Odgovor_na_pitanje:", err);
+    } else {
+      console.log("Tablica Odgovor_na_pitanje je spremna!");
+    }
+  });
 });
 
 app.post("/loginorganizatora", (req, res) => {
@@ -293,8 +314,8 @@ app.post("/api/pitanja", (req, res) => {
 
     const sql = `
         INSERT INTO Pitanje_za_dogadaj
-        (Sadrzaj_pitanja, ID_posjetitelja, ID_dogadaja)
-        VALUES (?, ?, ?)
+        (Sadrzaj_pitanja, ID_posjetitelja, ID_dogadaja, Datum_unosa_p)
+        VALUES (?, ?, ?, NOW())
     `;
 
     connection.query(sql,
@@ -314,10 +335,15 @@ app.get("/api/questions", (req, res) => {
     SELECT 
       p.ID_pitanja, 
       p.Sadrzaj_pitanja, 
-      p.Datum_unosa_p AS Vrijeme_postavljana, 
-      o.Sadrzaj_odgovora 
+      p.Datum_unosa_p, 
+      p.ID_posjetitelja,
+      ps.Ime_posjetitelja,
+      o.Sadrzaj_odgovora,
+      org.Ime_organizatora
     FROM Pitanje_za_dogadaj p 
+    LEFT JOIN Posjetitelj ps ON p.ID_posjetitelja = ps.ID_posjetitelja
     LEFT JOIN Odgovor_na_pitanje o ON p.ID_pitanja = o.ID_pitanja
+    LEFT JOIN Organizator org ON o.ID_organizatora = org.ID_organizatora
     WHERE p.ID_dogadaja = ?
     ORDER BY p.ID_pitanja DESC
   `;
@@ -403,50 +429,6 @@ app.post("/api/admin/odgovori", (req, res) => {
   });
 });
 
-// GET komentari po događaju
-app.get("/comments", (req, res) => {
-  const { eventId } = req.query;
-  let sql =
-    "SELECT ID_komentara, Sadrzaj_komentara, ID_korisnika, ID_dogadaja, Datum_unosa FROM Komentar";
-  const params = [];
-  if (eventId) {
-    sql += " WHERE ID_dogadaja = ?";
-    params.push(eventId);
-  }
-  sql += " ORDER BY ID_komentara DESC";
-  connection.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    res.json(results);
-  });
-});
-
-// POST novi komentar
-app.post("/comments", (req, res) => {
-    const { sadrzaj, ocjena, idPosjetitelja, idDogadaja } = req.body;
-
-    const sql = `
-        INSERT INTO Komentar
-        (Sadrzaj_komentara, Broj_zvjezdica, ID_posjetitelja, ID_dogadaja)
-        VALUES (?, ?, ?, ?)
-    `;
-
-    connection.query(sql,
-        [sadrzaj, ocjena, idPosjetitelja, idDogadaja],
-        (err, result) => {
-            if (err) return res.status(500).json(err);
-            res.json(result);
-        }
-    );
-});
-
-app.get("/api/comments", (req, res) => {
-  const sql = "SELECT ID_dogadaja, Naziv_dogadaja FROM Dogadaj";
-  connection.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    res.json(results);
-  });
-});
-
 // POST ruta za unos događaja
 app.post("/novidogadaj", (req, res) => {
   const { naziv, lokacija, datum, vrijeme, opis } = req.body;
@@ -454,31 +436,6 @@ app.post("/novidogadaj", (req, res) => {
   console.log("Organizator iz sessiona:", ID_organizatora);
   const sql = `INSERT INTO Dogadaj (Naziv_dogadaja, Lokacija_dogadaja, Datum_i_vrijeme_dogadaja, Opis_dogadaja, ID_organizatora) VALUES (?, ?, ?, ?, ?, ?)`;
   connection.query(sql, [naziv, lokacija, datum, vrijeme, opis, ID_organizatora]);
-});
-
-app.get("/api/admin/komentari-bez-odgovora", (req, res) => {
-  const { idOrganizatora } = req.query;
-
-  const sql = `
-    SELECT 
-      k.ID_komentara,
-      k.Sadrzaj_komentara,
-      k.Datum_unosa_k,
-      k.ID_dogadaja,
-      d.Naziv_dogadaja
-    FROM Komentar k
-    JOIN Dogadaj d ON k.ID_dogadaja = d.ID_dogadaja
-    WHERE d.ID_organizatora = ?
-    ORDER BY k.ID_komentara DESC
-  `;
-
-  connection.query(sql, [idOrganizatora], (err, results) => {
-    if (err) {
-      console.error("Greška pri dohvaćanju komentara:", err);
-      return res.status(500).json({ error: "Greška pri dohvatu komentara" });
-    }
-    res.json(results);
-  });
 });
 
 app.delete("/api/admin/pitanja/:id", (req, res) => {
@@ -490,23 +447,6 @@ app.delete("/api/admin/pitanja/:id", (req, res) => {
       return res.status(500).json({ error: "Greška na serveru pri brisanju pitanja" });
     }
     res.status(200).json({ status: "success", message: "Uspješno obrisano" });
-  });
-});
-
-app.post("/api/admin/odgovori-na-komentar", (req, res) => {
-  const { sadrzaj, idKomentara, idOrganizatora } = req.body;
-  if (!sadrzaj || !idKomentara || !idOrganizatora) {
-    return res
-      .status(400)
-      .json({ error: "Nedostaju podaci (sadrzaj, idKomentara, idOrganizatora)" });
-  }
-  const sql = `INSERT INTO Odgovor_na_komentar (Sadrzaj_odgovora, ID_komentara, ID_organizatora) VALUES (?, ?, ?)`;
-  connection.query(sql, [sadrzaj, idKomentara, idOrganizatora], (err) => {
-    if (err) {
-      console.error("Greška pri spremanju odgovora na komentar:", err);
-      return res.status(500).json({ error: "Greška pri spremanju odgovora" });
-    }
-    res.json({ status: "success" });
   });
 });
 
