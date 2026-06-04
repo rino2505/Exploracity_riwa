@@ -84,6 +84,92 @@ app.post("/loginposjetitelja", (req, res) => {
     });
 });
 
+// REGISTRACIJA ORGANIZATORA
+app.post("/signuporganizatora", (req, res) => {
+    console.log("SIGNUP ORGANIZATOR:", req.body);
+
+    const { Ime_organizatora, Prezime_organizatora, Email_organizatora, Lozinka_organizatora } = req.body;
+
+    // Validacija
+    if (!Ime_organizatora || !Prezime_organizatora || !Email_organizatora || !Lozinka_organizatora) {
+        return res.status(400).json({ error: "Svi podaci su obavezni" });
+    }
+
+    // Provjera postoji li već organizator s tim emailom
+    const checkSql = "SELECT * FROM Organizator WHERE Email_organizatora = ?";
+    connection.query(checkSql, [Email_organizatora], (err, results) => {
+        if (err) return res.status(500).json({ error: "Greška pri provjeri emaila" });
+
+        if (results.length > 0) {
+            return res.status(409).json({ error: "Email već postoji" });
+        }
+
+        // Unos novog organizatora
+        const insertSql = `
+            INSERT INTO Organizator (Ime_organizatora, Prezime_organizatora, Email_organizatora, Lozinka_organizatora)
+            VALUES (?, ?, ?, ?)
+        `;
+
+        connection.query(insertSql, [Ime_organizatora, Prezime_organizatora, Email_organizatora, Lozinka_organizatora], (err, result) => {
+            if (err) {
+                console.error("Greška pri registraciji organizatora:", err);
+                return res.status(500).json({ error: "Greška pri registraciji" });
+            }
+
+            res.json({
+                ID_organizatora: result.insertId,
+                ime: Ime_organizatora,
+                prezime: Prezime_organizatora,
+                uloga: "admin",
+                message: "Uspješno ste se registrirali"
+            });
+        });
+    });
+});
+
+// REGISTRACIJA POSJETITELJA
+app.post("/signupposjetitelja", (req, res) => {
+    console.log("SIGNUP POSJETITELJ:", req.body);
+
+    const { Ime_posjetitelja, Prezime_posjetitelja, Email_posjetitelja, Lozinka_posjetitelja } = req.body;
+
+    // Validacija
+    if (!Ime_posjetitelja || !Prezime_posjetitelja || !Email_posjetitelja || !Lozinka_posjetitelja) {
+        return res.status(400).json({ error: "Svi podaci su obavezni" });
+    }
+
+    // Provjera postoji li već posjetitelj s tim emailom
+    const checkSql = "SELECT * FROM Posjetitelj WHERE Email_posjetitelja = ?";
+    connection.query(checkSql, [Email_posjetitelja], (err, results) => {
+        if (err) return res.status(500).json({ error: "Greška pri provjeri emaila" });
+
+        if (results.length > 0) {
+            return res.status(409).json({ error: "Email već postoji" });
+        }
+
+        // Unos novog posjetitelja
+        const insertSql = `
+            INSERT INTO Posjetitelj (Ime_posjetitelja, Prezime_posjetitelja, Email_posjetitelja, Lozinka_posjetitelja)
+            VALUES (?, ?, ?, ?)
+        `;
+
+        connection.query(insertSql, [Ime_posjetitelja, Prezime_posjetitelja, Email_posjetitelja, Lozinka_posjetitelja], (err, result) => {
+            if (err) {
+                console.error("Greška pri registraciji posjetitelja:", err);
+                return res.status(500).json({ error: "Greška pri registraciji" });
+            }
+
+            res.json({
+                ID_posjetitelja: result.insertId,
+                ime: Ime_posjetitelja,
+                prezime: Prezime_posjetitelja,
+                uloga: "posjetitelj",
+                message: "Uspješno ste se registrirali"
+            });
+        });
+    });
+});
+
 
 // GET – popis događaja
 app.get("/dogadaji", (req, res) => {
