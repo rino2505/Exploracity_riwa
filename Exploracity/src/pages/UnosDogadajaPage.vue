@@ -6,8 +6,7 @@
 
       <q-input v-model="noviDogadaj.naziv" label="Naziv" outlined />
       <q-input v-model="noviDogadaj.lokacija" label="Lokacija" outlined />
-      <q-input v-model="noviDogadaj.datum" label="Datum događaja" outlined />
-      <q-input v-model="noviDogadaj.vrijeme" label="Vrijeme događaja" outlined />
+      <q-input v-model="noviDogadaj.datumvrijeme" label="Datum i vrijeme događaja" outlined />
       <q-input v-model="noviDogadaj.opis" label="Opis" type="textarea" outlined />
 
       
@@ -32,8 +31,7 @@ const noviDogadaj = ref({
   id: 0,
   naziv: '',
   lokacija: '',
-  datum: '',
-  vrijeme: '',
+  datumvrijeme: '',
   opis: '',
 })
 
@@ -47,8 +45,7 @@ async function spremiDogadaj() {
       body: JSON.stringify({
         naziv: noviDogadaj.value.naziv,
         lokacija: noviDogadaj.value.lokacija,
-        datum: noviDogadaj.value.datum,
-        vrijeme: noviDogadaj.value.vrijeme,
+        datumvrijeme: noviDogadaj.value.datumvrijeme,
         opis: noviDogadaj.value.opis,
       })
     });
@@ -73,8 +70,7 @@ function odustani() {
     id: 0,
     naziv: '',
     lokacija: '',
-    datum: '',
-    vrijeme: '',
+    datumvrijeme: '',
     opis: '',
   }
 }
