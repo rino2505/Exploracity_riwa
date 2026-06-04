@@ -88,7 +88,7 @@ app.post("/loginposjetitelja", (req, res) => {
 // GET – popis događaja
 app.get("/dogadaji", (req, res) => {
   connection.query(
-    "SELECT ID_dogadaja, Naziv_dogadaja, Opis_dogadaja FROM Dogadaj",
+    "SELECT ID_dogadaja, Naziv_dogadaja, Opis_dogadaja, Datum_i_vrijeme_dogadaja FROM Dogadaj",
     (err, result) => {
       if (err) return res.status(500).send(err);
       res.send(result);
@@ -425,8 +425,14 @@ app.post("/api/admin/odgovori-na-komentar", (req, res) => {
 });
 
 // ================= PLAN IZLASKA =================
-app.post("/plan", (req, res) => {
+app.post("/pos/unosplana", (req, res) => {
+    console.log("BODY PLAN:", req.body);
+
     const { idDogadaja, idPosjetitelja, biljeska } = req.body;
+
+    if (!idDogadaja || !idPosjetitelja) {
+        return res.status(400).json({ error: "Fale podaci" });
+    }
 
     const sql = `
         INSERT INTO Plan_izlaska
@@ -437,13 +443,38 @@ app.post("/plan", (req, res) => {
     connection.query(sql,
         [idDogadaja, idPosjetitelja, biljeska],
         (err, result) => {
-            if (err) return res.status(500).json(err);
+            if (err) {
+                console.log("MYSQL ERROR:", err);
+                return res.status(500).json(err);
+            }
+
             res.json(result);
         }
     );
 });
 
+app.get("/pos/pregledplanova", (req, res) => {
+    const { idPosjetitelja } = req.query;
 
+    const sql = `
+        SELECT 
+            p.ID_plan,
+            p.Biljeska,
+            d.Naziv_dogadaja
+        FROM Plan_izlaska p
+        JOIN Dogadaj d ON p.ID_dogadaja = d.ID_dogadaja
+        WHERE p.ID_posjetitelja = ?
+        ORDER BY p.ID_plan DESC
+    `;
+
+    connection.query(sql, [idPosjetitelja], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Greška u bazi" });
+        }
+        res.json(results);
+    });
+});
 // ================= PREGLED =================
 app.post("/pregled", (req, res) => {
     const { idDogadaja, idPosjetitelja } = req.body;

@@ -21,9 +21,9 @@ export default {
     const columns = [
       { name: 'naziv', align: 'center', label: 'Naziv događaja', field: 'Naziv_dogadaja', sortable: true },
       { name: 'lokacija', label: 'Lokacija događaja', field: 'Lokacija_dogadaja', sortable: true },
-      { name: 'datum', label: 'Datum događaja', field: 'Datum_dogadaja', align: 'left' },
-      { name: 'vrijeme', label: 'Vrijeme događaja', field: 'Vrijeme_dogadaja' },
+      { name: 'datumvrijeme', label: 'Datum i vrijeme događaja', field: 'datumvrijeme', align: 'center' },
       { name: 'opis', label: 'Opis događaja', field: 'Opis_dogadaja' },
+      { name: 'status', label: 'Status događaja', field: 'Status_dogadaja' },
     ]
 
     async function ucitajDogadaje() {
