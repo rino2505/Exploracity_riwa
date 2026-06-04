@@ -79,15 +79,33 @@
 
         <div class="text-h6 text-center q-mb-md">Sign Up</div>
 
-        <q-input
-          standout
-          v-model="signupUsername"
-          placeholder="Username"
+        <q-option-group
+          v-model="signupType"
+          :options="[
+            { label: 'Posjetitelj', value: 'posjetitelj' },
+            { label: 'Organizator', value: 'organizator' }
+          ]"
+          color="black"
+          inline
+          class="q-mb-md"
         />
 
         <q-input
           standout
-          v-model="email"
+          v-model="signupIme"
+          placeholder="Ime"
+        />
+
+        <q-input
+          standout
+          v-model="signupPrezime"
+          placeholder="Prezime"
+          class="q-mt-md"
+        />
+
+        <q-input
+          standout
+          v-model="signupEmail"
           placeholder="Email"
           type="email"
           class="q-mt-md"
@@ -97,14 +115,14 @@
           standout
           v-model="signupPassword"
           placeholder="Password"
-          :type="isPwd ? 'password' : 'text'"
+          :type="isPwdSignup ? 'password' : 'text'"
           class="q-mt-md"
         >
           <template v-slot:append>
             <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
+              :name="isPwdSignup ? 'visibility_off' : 'visibility'"
               class="cursor-pointer"
-              @click="isPwd = !isPwd"
+              @click="isPwdSignup = !isPwdSignup"
             />
           </template>
         </q-input>
@@ -137,11 +155,14 @@ const Email_posjetitelja = ref('')
 const Lozinka_posjetitelja = ref('')
 
 // Varijable za Sign Up
-const signupUsername = ref('')
+const signupType = ref('posjetitelj')
+const signupIme = ref('')
+const signupPrezime = ref('')
+const signupEmail = ref('')
 const signupPassword = ref('')
-const email = ref('')
 
 const isPwd = ref(true)
+const isPwdSignup = ref(true)
 
 const API_URL = 'http://localhost:3000'
 
@@ -216,7 +237,7 @@ const loginposjetitelja = async () => {
       
       // 3. Odgoda preusmjeravanja da se notifikacija stigne prikazati
       setTimeout(() => {
-        router.push('/pos/dogadaji/')
+        router.push('/dogadajislikeuser')
       }, 1000)
     }
   } catch (err) {
@@ -230,6 +251,78 @@ const loginposjetitelja = async () => {
 }
 
 const signup = async () => {
-  Notify.create({ type: 'info', message: 'Registracija trenutno nije dostupna' })
+  // Validacija
+  if (!signupIme.value || !signupPrezime.value || !signupEmail.value || !signupPassword.value) {
+    Notify.create({ type: 'warning', message: 'Svi podaci su obavezni' })
+    return
+  }
+
+  try {
+    let url = ''
+    let payload = {}
+
+    if (signupType.value === 'organizator') {
+      url = `${API_URL}/signuporganizatora`
+      payload = {
+        Ime_organizatora: signupIme.value,
+        Prezime_organizatora: signupPrezime.value,
+        Email_organizatora: signupEmail.value,
+        Lozinka_organizatora: signupPassword.value
+      }
+    } else {
+      url = `${API_URL}/signupposjetitelja`
+      payload = {
+        Ime_posjetitelja: signupIme.value,
+        Prezime_posjetitelja: signupPrezime.value,
+        Email_posjetitelja: signupEmail.value,
+        Lozinka_posjetitelja: signupPassword.value
+      }
+    }
+
+    const res = await axios.post(url, payload)
+
+    if (res.status === 200) {
+      // 1. Spremanje podataka
+      localStorage.setItem('token', JSON.stringify(res.data))
+      
+      // 2. Prikaz notifikacije
+      Notify.create({ 
+        type: 'positive', 
+        message: `Dobrodošli, ${res.data.ime}!`,
+        position: 'top',
+        timeout: 1000
+      })
+      
+      // 3. Odgoda preusmjeravanja
+      setTimeout(() => {
+        if (signupType.value === 'organizator') {
+          router.push('/admin/odgovori')
+        } else {
+          router.push('/dogadajislikeuser')
+        }
+      }, 1000)
+
+      // Očisti forme
+      signupIme.value = ''
+      signupPrezime.value = ''
+      signupEmail.value = ''
+      signupPassword.value = ''
+    }
+  } catch (err) {
+    console.error("Greška pri registraciji:", err)
+    
+    let errorMessage = 'Greška pri registraciji'
+    if (err.response?.status === 409) {
+      errorMessage = 'Email već postoji'
+    } else if (err.response?.data?.error) {
+      errorMessage = err.response.data.error
+    }
+    
+    Notify.create({
+      type: 'negative',
+      message: errorMessage,
+      position: 'top'
+    })
+  }
 }
 </script>
