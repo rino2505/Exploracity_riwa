@@ -136,22 +136,10 @@ const linksList = [
     link: '/pos/unospitanja'
   },
   {
-    title: 'Unos komentara',
-    caption: 'Unos komentara',
-    icon: 'comment',
-    link: '/pos/unoskomentara'
-  },
-  {
     title: 'Stvaranje plana',
     caption: 'Stvaranje plana',
     icon: 'favorite',
     link: '/pos/unosplana'
-  },
-  {
-    title: 'Pregled planova',
-    caption: 'Pregled planova',
-    icon: 'favorite',
-    link: '/pos/pregledplanova'
   }
 ]
 
