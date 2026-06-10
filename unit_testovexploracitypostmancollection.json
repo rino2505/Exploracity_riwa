@@ -1,0 +1,686 @@
+{
+  "info": {
+    "name": "Unit Testovi – Backend (UT-1 do UT-24)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "idOrganizatora", "value": "1" },
+    { "key": "idPosjetitelja", "value": "1" },
+    { "key": "idDogadaja", "value": "1" },
+    { "key": "idPitanja", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "AUTH – Organizator",
+      "item": [
+        {
+          "name": "UT-1 Login organizatora – uspješan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/loginorganizatora",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email_organizatora\": \"test@test.com\",\n  \"Lozinka_organizatora\": \"test123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-1] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-1] Tijelo sadrži ID_organizatora', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('ID_organizatora');",
+                  "});",
+                  "pm.test('[UT-1] Uloga je admin', () => {",
+                  "  pm.expect(pm.response.json().uloga).to.eql('admin');",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('idOrganizatora', pm.response.json().ID_organizatora);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-2 Login organizatora – krivi podaci",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/loginorganizatora",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email_organizatora\": \"nepostoji@test.com\",\n  \"Lozinka_organizatora\": \"kriva\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-2] Status 401 za krive kredencijale', () => pm.response.to.have.status(401));",
+                  "pm.test('[UT-2] Poruka Krivi login', () => {",
+                  "  pm.expect(pm.response.text()).to.include('Krivi login');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AUTH – Posjetitelj",
+      "item": [
+        {
+          "name": "UT-3 Login posjetitelja – uspješan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/loginposjetitelja",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email_posjetitelja\": \"test@test.com\",\n  \"Lozinka_posjetitelja\": \"test123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-3] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-3] Tijelo sadrži ID_posjetitelja', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('ID_posjetitelja');",
+                  "});",
+                  "pm.test('[UT-3] Uloga je posjetitelj', () => {",
+                  "  pm.expect(pm.response.json().uloga).to.eql('posjetitelj');",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('idPosjetitelja', pm.response.json().ID_posjetitelja);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-4 Login posjetitelja – krivi podaci",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/loginposjetitelja",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email_posjetitelja\": \"nepostoji@test.com\",\n  \"Lozinka_posjetitelja\": \"kriva\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-4] Status 401 za krive kredencijale', () => pm.response.to.have.status(401));",
+                  "pm.test('[UT-4] Poruka Krivi login', () => {",
+                  "  pm.expect(pm.response.text()).to.include('Krivi login');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Registracija",
+      "item": [
+        {
+          "name": "UT-5 Registracija organizatora – uspješna",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/signuporganizatora",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Ime_organizatora\": \"Test\",\n  \"Prezime_organizatora\": \"Org\",\n  \"Email_organizatora\": \"neworg_{{$randomInt}}@test.com\",\n  \"Lozinka_organizatora\": \"lozinka123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-5] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-5] Tijelo sadrži ID_organizatora', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('ID_organizatora');",
+                  "});",
+                  "pm.test('[UT-5] Uloga je admin', () => {",
+                  "  pm.expect(pm.response.json().uloga).to.eql('admin');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-6 Registracija organizatora – nedostaju podaci",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/signuporganizatora",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Ime_organizatora\": \"Test\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-6] Status 400 kad nedostaju podaci', () => pm.response.to.have.status(400));",
+                  "pm.test('[UT-6] Poruka o obaveznim podacima', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('obavezni');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-7 Registracija posjetitelja – uspješna",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/signupposjetitelja",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Ime_posjetitelja\": \"Test\",\n  \"Prezime_posjetitelja\": \"Pos\",\n  \"Email_posjetitelja\": \"newpos_{{$randomInt}}@test.com\",\n  \"Lozinka_posjetitelja\": \"lozinka123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-7] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-7] Tijelo sadrži ID_posjetitelja', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('ID_posjetitelja');",
+                  "});",
+                  "pm.test('[UT-7] Uloga je posjetitelj', () => {",
+                  "  pm.expect(pm.response.json().uloga).to.eql('posjetitelj');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-8 Registracija posjetitelja – nedostaju podaci",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/signupposjetitelja",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Ime_posjetitelja\": \"Test\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-8] Status 400 kad nedostaju podaci', () => pm.response.to.have.status(400));",
+                  "pm.test('[UT-8] Poruka o obaveznim podacima', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('obavezni');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Događaji",
+      "item": [
+        {
+          "name": "UT-9 Dohvat svih događaja",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dogadaji"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-9] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-9] Response je array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});",
+                  "pm.test('[UT-9] Elementi imaju ID_dogadaja i Naziv_dogadaja', () => {",
+                  "  const data = pm.response.json();",
+                  "  if (data.length > 0) {",
+                  "    pm.expect(data[0]).to.have.property('ID_dogadaja');",
+                  "    pm.expect(data[0]).to.have.property('Naziv_dogadaja');",
+                  "    pm.collectionVariables.set('idDogadaja', data[0].ID_dogadaja);",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-10 Dohvat slike događaja – postoji",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dogadaj/{{idDogadaja}}/slika"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-10] Status je 200 ili 404', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.test('[UT-10] Content-Type je image/jpeg', () => {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('image');",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-11 Dohvat slike – nepostojeći događaj",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dogadaj/999999/slika"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-11] Status 404 za nepostojeći ID', () => pm.response.to.have.status(404));",
+                  "pm.test('[UT-11] Poruka Nema slike', () => {",
+                  "  pm.expect(pm.response.text()).to.include('Nema slike');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-12 Unos novog događaja",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/unosdogadaja",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naziv\": \"Testni događaj\",\n  \"lokacija\": \"Rijeka\",\n  \"datumvrijeme\": \"2025-12-31 20:00:00\",\n  \"opis\": \"Opis testnog događaja\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-12] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-12] Vraća id novog događaja', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('id');",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('idDogadaja', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-13 Admin – dohvat vlastitih događaja",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/moji-dogadaji?idOrganizatora={{idOrganizatora}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "moji-dogadaji"],
+              "query": [{ "key": "idOrganizatora", "value": "{{idOrganizatora}}" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-13] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-13] Response je array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-14 Admin – bez ID parametra",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/moji-dogadaji"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-14] Status 400 bez idOrganizatora', () => pm.response.to.have.status(400));",
+                  "pm.test('[UT-14] Poruka o nedostajućem ID-u', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('ID organizatora');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pitanja i Odgovori",
+      "item": [
+        {
+          "name": "UT-15 Postavljanje pitanja",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/pitanja",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sadrzaj\": \"Testno pitanje za događaj?\",\n  \"idPosjetitelja\": {{idPosjetitelja}},\n  \"idDogadaja\": {{idDogadaja}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-15] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-15] Vraća insertId', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('insertId');",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('idPitanja', pm.response.json().insertId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-16 Dohvat pitanja za događaj",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/questions?eventId={{idDogadaja}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "questions"],
+              "query": [{ "key": "eventId", "value": "{{idDogadaja}}" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-16] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-16] Response je array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});",
+                  "pm.test('[UT-16] Elementi imaju Sadrzaj_pitanja i Ime_posjetitelja', () => {",
+                  "  const data = pm.response.json();",
+                  "  if (data.length > 0) {",
+                  "    pm.expect(data[0]).to.have.property('Sadrzaj_pitanja');",
+                  "    pm.expect(data[0]).to.have.property('Ime_posjetitelja');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-17 Admin – filter neodgovorena pitanja",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/pitanja-filtrirano?idOrganizatora={{idOrganizatora}}&status=unanswered",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "pitanja-filtrirano"],
+              "query": [
+                { "key": "idOrganizatora", "value": "{{idOrganizatora}}" },
+                { "key": "status", "value": "unanswered" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-17] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-17] Svi zapisi imaju Sadrzaj_odgovora = null', () => {",
+                  "  pm.response.json().forEach(p => {",
+                  "    pm.expect(p.Sadrzaj_odgovora).to.be.null;",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-18 Admin – filter odgovorena pitanja",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/pitanja-filtrirano?idOrganizatora={{idOrganizatora}}&status=answered",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "pitanja-filtrirano"],
+              "query": [
+                { "key": "idOrganizatora", "value": "{{idOrganizatora}}" },
+                { "key": "status", "value": "answered" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-18] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-18] Svi zapisi imaju Sadrzaj_odgovora != null', () => {",
+                  "  pm.response.json().forEach(p => {",
+                  "    pm.expect(p.Sadrzaj_odgovora).to.not.be.null;",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-19 Admin – odgovor na pitanje",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/admin/odgovori",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sadrzaj\": \"Ovo je testni odgovor.\",\n  \"idPitanja\": {{idPitanja}},\n  \"idOrganizatora\": {{idOrganizatora}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-19] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-19] status = success', () => {",
+                  "  pm.expect(pm.response.json().status).to.eql('success');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-20 Brisanje pitanja",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/pitanja/{{idPitanja}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-20] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-20] status = success', () => {",
+                  "  pm.expect(pm.response.json().status).to.eql('success');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Plan Izlaska",
+      "item": [
+        {
+          "name": "UT-21 Unos plana izlaska – uspješan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/pos/unosplana",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idDogadaja\": {{idDogadaja}},\n  \"idPosjetitelja\": {{idPosjetitelja}},\n  \"biljeska\": \"Idem s prijateljem\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-21] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-21] Vraća insertId', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('insertId');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-22 Unos plana izlaska – fale podaci",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/pos/unosplana",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"biljeska\": \"Samo bilješka bez ID-ova\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-22] Status 400 bez obveznih ID-ova', () => pm.response.to.have.status(400));",
+                  "pm.test('[UT-22] Poruka Fale podaci', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('Fale podaci');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UT-23 Pregled planova posjetitelja",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pos/pregledplanova?idPosjetitelja={{idPosjetitelja}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pos", "pregledplanova"],
+              "query": [{ "key": "idPosjetitelja", "value": "{{idPosjetitelja}}" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-23] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-23] Response je array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});",
+                  "pm.test('[UT-23] Elementi imaju ID_plan i Naziv_dogadaja', () => {",
+                  "  const data = pm.response.json();",
+                  "  if (data.length > 0) {",
+                  "    pm.expect(data[0]).to.have.property('ID_plan');",
+                  "    pm.expect(data[0]).to.have.property('Naziv_dogadaja');",
+                  "    pm.expect(data[0]).to.have.property('Biljeska');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pregled",
+      "item": [
+        {
+          "name": "UT-24 Unos pregleda događaja",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/pregled",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idDogadaja\": {{idDogadaja}},\n  \"idPosjetitelja\": {{idPosjetitelja}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('[UT-24] Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('[UT-24] Vraća insertId novog pregleda', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('insertId');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
