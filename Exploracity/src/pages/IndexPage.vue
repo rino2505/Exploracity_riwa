@@ -237,7 +237,7 @@ const loginposjetitelja = async () => {
       
       // 3. Odgoda preusmjeravanja da se notifikacija stigne prikazati
       setTimeout(() => {
-        router.push('/dogadajislikeuser')
+        router.push('/pos/dogadaji')
       }, 1000)
     }
   } catch (err) {
